@@ -1,33 +1,33 @@
-name: Maven Tests
+name: Run Selenium Tests with Selenoid
 
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
           distribution: 'temurin'
+          java-version: '21'
 
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml
+      - name: Start Selenoid + UI via Docker Compose
+        run: |
+          docker-compose up -d
+          sleep 10
+          docker ps -a
 
       - name: Run tests
-        run: mvn test
+        run: mvn -B test
 
-      - name: Upload Test Videos
+      - name: Upload test videos
         uses: actions/upload-artifact@v4
         with:
-          name: test-videos
-          path: videos/
+          name: selenium-videos
+          path: ./video
