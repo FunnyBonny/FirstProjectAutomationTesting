@@ -43,19 +43,20 @@ public class FormTest {
         recorder = new ATUTestRecorder("test-videos", "FormTest_Video", false);
         recorder.start();
 
-        driver = Driver.getLocalDriver();
-        driver.manage().window().maximize();
+        // Folosește RemoteWebDriver prin Selenoid
+        driver = Driver.getRemoteDriver();
     }
 
     @Test
     public void fillFormTest() {
         driver.get(URL);
 
+        // Ascunde ad-ul dacă există
         try {
             WebElement ad = driver.findElement(By.cssSelector("iframe[id^='google_ads_iframe']"));
             ((JavascriptExecutor) driver).executeScript("arguments[0].style.display='none';", ad);
         } catch (Exception e) {
-            // dacă nu găsește ad-ul, ignoră
+            // Ignoră dacă nu găsește ad-ul
         }
 
         FormPom form = new FormPom(driver);
