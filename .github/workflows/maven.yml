@@ -19,7 +19,7 @@ jobs:
 
       - name: Start Selenoid + UI via Docker Compose
         run: |
-          docker-compose up -d
+          docker compose up -d
           sleep 10
           docker ps -a
 
