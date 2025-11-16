@@ -2,28 +2,24 @@ package utils;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.openqa.selenium.chrome.ChromeOptions;
+
 public class Driver {
     private static WebDriver driver;
 
     public static WebDriver getLocalDriver() {
         if (driver == null) {
             try {
-                WebDriverManager.chromedriver().setup();
+                WebDriverManager.chromedriver().clearDriverCache().setup();
 
                 ChromeOptions options = new ChromeOptions();
-
-                // Pentru debugging, comentează headless temporar:
-                // options.addArguments("--headless=new");
-                options.addArguments("--disable-gpu");
-                options.addArguments("--no-sandbox");
-                options.addArguments("--disable-dev-shm-usage");
-                options.addArguments("--window-size=1920,1080");
+                options.addArguments("--start-maximized");
                 options.addArguments("--remote-allow-origins=*");
 
+                
+
                 driver = new ChromeDriver(options);
-                driver.manage().window().maximize();
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -39,7 +35,6 @@ public class Driver {
         }
     }
 
-    // Metodă nouă pentru a reseta driver-ul
     public static void resetDriver() {
         quitDriver();
     }
