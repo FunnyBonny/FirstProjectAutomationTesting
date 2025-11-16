@@ -2,7 +2,7 @@ name: Run Selenium Tests with Selenoid
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   test:
@@ -17,15 +17,10 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Start Selenoid + UI via Docker Compose
+      - name: Start Selenoid + UI
         run: |
-          # verificăm că fișierul există
-          if [ ! -f selenoid/docker-compose.yml ]; then
-            echo "selenoid/docker-compose.yml not found!"
-            exit 1
-          fi
           docker compose -f selenoid/docker-compose.yml up -d
-          sleep 10
+          sleep 15
           docker ps -a
 
       - name: Run tests
