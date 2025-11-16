@@ -1,26 +1,27 @@
 package utils;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import io.github.bonigarcia.wdm.WebDriverManager;
+import java.net.URL;
 
 public class Driver {
     private static WebDriver driver;
 
-    public static WebDriver getLocalDriver() {
+    public static WebDriver getRemoteDriver() {
         if (driver == null) {
             try {
-                WebDriverManager.chromedriver().clearDriverCache().setup();
-
                 ChromeOptions options = new ChromeOptions();
-                options.addArguments("--headless=new");          // headless Chrome modern
-                options.addArguments("--no-sandbox");            // necesar pe GitHub Actions
-                options.addArguments("--disable-dev-shm-usage"); // rezolvă probleme cu memoria
+                options.addArguments("--headless=new");           // headless
+                options.addArguments("--no-sandbox");
+                options.addArguments("--disable-dev-shm-usage");
+                options.addArguments("--window-size=1920,1080");
                 options.addArguments("--remote-allow-origins=*");
-                options.addArguments("--window-size=1920,1080"); // dimensiune fereastră
 
-                driver = new ChromeDriver(options);
+                // URL-ul Selenoid
+                String selenoidUrl = "http://localhost:4444/wd/hub";
+
+                driver = new RemoteWebDriver(new URL(selenoidUrl), options);
 
             } catch (Exception e) {
                 e.printStackTrace();
