@@ -1,43 +1,33 @@
-package utils;
+name: Run Selenium Tests with Selenoid
 
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import java.net.URL;
+on:
+  push:
+    branches: ["main"]
 
-public class Driver {
-    private static WebDriver driver;
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-    public static WebDriver getRemoteDriver() {
-        if (driver == null) {
-            try {
-                ChromeOptions options = new ChromeOptions();
-                options.addArguments("--headless=new");           // headless
-                options.addArguments("--no-sandbox");
-                options.addArguments("--disable-dev-shm-usage");
-                options.addArguments("--window-size=1920,1080");
-                options.addArguments("--remote-allow-origins=*");
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
 
-                // URL-ul Selenoid
-                String selenoidUrl = "http://localhost:4444/wd/hub";
+      - name: Start Selenoid + UI
+        run: |
+          docker compose -f selenoid/docker-compose.yml up -d
+          sleep 15
+          docker ps -a
 
-                driver = new RemoteWebDriver(new URL(selenoidUrl), options);
+      - name: Run tests
+        run: mvn -B test
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return driver;
-    }
-
-    public static void quitDriver() {
-        if (driver != null) {
-            driver.quit();
-            driver = null;
-        }
-    }
-
-    public static void resetDriver() {
-        quitDriver();
-    }
-}
+      - name: Upload test videos
+        uses: actions/upload-artifact@v4
+        with:
+          name: selenium-videos
+          path: ./video
