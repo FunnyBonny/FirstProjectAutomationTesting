@@ -19,7 +19,12 @@ jobs:
 
       - name: Start Selenoid + UI via Docker Compose
         run: |
-          docker compose up -d
+          # verificăm că fișierul există
+          if [ ! -f selenoid/docker-compose.yml ]; then
+            echo "selenoid/docker-compose.yml not found!"
+            exit 1
+          fi
+          docker compose -f selenoid/docker-compose.yml up -d
           sleep 10
           docker ps -a
 
