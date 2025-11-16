@@ -1,27 +1,30 @@
 package utils;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import java.net.URL;
+import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class Driver {
+
     private static WebDriver driver;
 
-    public static WebDriver getRemoteDriver() {
+    public static WebDriver getDriver() {
         if (driver == null) {
             try {
+                WebDriverManager.chromedriver().setup();
+
                 ChromeOptions options = new ChromeOptions();
-                options.addArguments("--headless=new");           // headless
-                options.addArguments("--no-sandbox");
-                options.addArguments("--disable-dev-shm-usage");
-                options.addArguments("--window-size=1920,1080");
+                options.addArguments("--start-maximized");
                 options.addArguments("--remote-allow-origins=*");
 
-                // URL-ul Selenoid
-                String selenoidUrl = "http://localhost:4444/wd/hub";
+                // Modul headless pentru CI/CD / Docker / Selenoid
+                options.addArguments("--headless=new");
+                options.addArguments("--disable-gpu");
+                options.addArguments("--no-sandbox");
+                options.addArguments("--disable-dev-shm-usage");
 
-                driver = new RemoteWebDriver(new URL(selenoidUrl), options);
+                driver = new ChromeDriver(options);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -35,9 +38,5 @@ public class Driver {
             driver.quit();
             driver = null;
         }
-    }
-
-    public static void resetDriver() {
-        quitDriver();
     }
 }
